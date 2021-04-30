@@ -1,0 +1,38 @@
+A=$(getopt -n $0 -o o:p: -- "$@")
+
+
+if [ "$?" != "0" ]
+then
+
+
+    exit 1
+fi
+
+output_file=""
+library_path=""
+
+while [ -n "$1" ]
+do
+    case "$1" in
+        -o) 
+            output_file="$2"
+            shift
+            ;;
+        -p) 
+            so_path="$2"
+            shift 
+            ;;
+        --) 
+            shift
+            break
+            ;;
+        *) 
+            break
+            ;;
+    esac
+
+    shift
+
+done
+
+LD_PRELOAD="$so_path" "$@"
