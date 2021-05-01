@@ -1,38 +1,42 @@
-A=$(getopt -n $0 -o o:p: -- "$@")
-
-
-if [ "$?" != "0" ]
+# check arguments is not empty
+if [ -z "$1" ]
 then
-
-
+    echo "no command given."
     exit 1
 fi
 
-output_file=""
-library_path=""
+# error function
+print_err() 
+{
+    printf "usage: $0 [-o file] [-p sopath] [--] cmd [cmd args ...]\n"
+    printf "\t-p: set the path to logger.so, default = ./logger.so\n"
+    printf "\t-o: print output to file, print to \"stderr\" if no file specified\n"
+    printf "\t--: separate the arguments for logger and for the command\n"
+}
 
-while [ -n "$1" ]
+# default value
+output_file=
+so_path="./logger.so"
+
+# start parsing
+while getopts ":o:p:" arg
 do
-    case "$1" in
-        -o) 
-            output_file="$2"
-            shift
+    case $arg in
+        o)
+            output_file="$OPTARG"
             ;;
-        -p) 
-            so_path="$2"
-            shift 
+        p)
+            so_path="$OPTARG"
             ;;
-        --) 
-            shift
-            break
-            ;;
-        *) 
-            break
+        : | ?)
+            print_err
+            exit 1
             ;;
     esac
-
-    shift
-
 done
 
+# shift parsed arguments
+shift $(($OPTIND - 1))
+
+# execute command with so injection
 LD_PRELOAD="$so_path" "$@"
