@@ -8,6 +8,8 @@ fi
 # error function
 print_err() 
 {
+    printf "$0: invalid option -- '$OPTARG'\n"
+
     printf "usage: $0 [-o file] [-p sopath] [--] cmd [cmd args ...]\n"
     printf "\t-p: set the path to logger.so, default = ./logger.so\n"
     printf "\t-o: print output to file, print to \"stderr\" if no file specified\n"
@@ -19,6 +21,7 @@ output_file=
 so_path="./logger.so"
 
 # start parsing
+# leading : means no error will print
 while getopts ":o:p:" arg
 do
     case $arg in
@@ -28,7 +31,8 @@ do
         p)
             so_path="$OPTARG"
             ;;
-        : | ?)
+        : | ?) 
+            # should sparate these two case, and generate different erro messages
             print_err
             exit 1
             ;;
