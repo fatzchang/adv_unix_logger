@@ -1,7 +1,16 @@
+#include <stdio.h>
 #include <stddef.h>
 #include <dlfcn.h>
+#include <string.h>
+#include <limits.h>
+#include <stdlib.h>
 
-#include "dl.h"
+#include "utils.h"
+
+void printline(const char *message)
+{
+    printf("[logger] %s\n", message);
+}
 
 void * get_real_func(const char *func)
 {
@@ -25,4 +34,15 @@ void * get_real_func(const char *func)
     }
 
     return real_func;
+}
+
+char *get_real_path(char *resolved_path, const char *path)
+{
+    if (realpath(path, resolved_path) == NULL) {
+        // get realpath failed, just use untouched path
+        memset(resolved_path, 0, PATH_MAX);
+        strcpy(resolved_path, path);
+    }
+
+    return resolved_path;
 }
