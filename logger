@@ -17,7 +17,7 @@ print_err()
 }
 
 # default value
-output_file=
+output_file=/proc/$$/fd/2
 so_path="./logger.so"
 
 # start parsing
@@ -42,5 +42,8 @@ done
 # shift parsed arguments
 shift $(($OPTIND - 1))
 
+export LD_PRELOAD="$so_path"
+export OUTPUT_FILE="$output_file"
+
 # execute command with so injection
-LD_PRELOAD="$so_path" "$@"
+$@

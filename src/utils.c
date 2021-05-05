@@ -4,15 +4,22 @@
 #include <string.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 #include "utils.h"
 
 void printline(const char *message)
 {
-    printf("[logger] %s\n", message);
+    char *output_file = getenv("OUTPUT_FILE");
+    
+    mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+    int fd = open(output_file, O_APPEND | O_RDWR | O_CREAT, mode);
+    
+    dprintf(fd, "[logger] %s\n", message);
 }
 
-void * get_real_func(const char *func)
+void * get_real_func(const char *func_name)
 {
     /* use static variable to prevent duplicated .so loading */
     static void *handle = NULL;
@@ -27,7 +34,7 @@ void * get_real_func(const char *func)
     /* Clear any existing error */
     dlerror();
 
-    void *real_func = dlsym(handle, func);
+    void *real_func = dlsym(handle, func_name);
 
     if (dlerror() != NULL) {
         return NULL;
