@@ -111,3 +111,19 @@ FILE *tmpfile()
 
     return rtn;
 }
+
+int remove(const char *path)
+{
+    char resolved_path[PATH_MAX] = { 0 };
+    get_real_path(resolved_path, path);
+
+    int (*real_remove)(const char *) = get_real_func("remove");
+
+    int rtn = real_remove(path);
+
+    char buffer[MAX_MESSAGE_SIZE] = { 0 };
+    snprintf(buffer, MAX_MESSAGE_SIZE, "remove(\"%s\") = %d", resolved_path, rtn);
+    printline(buffer);
+
+    return rtn;
+}
