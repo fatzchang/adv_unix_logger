@@ -1,13 +1,13 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stddef.h>
-#include <dlfcn.h>
 #include <string.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <ctype.h>
-
+#include <dlfcn.h>
 
 #include "utils.h"
 
@@ -23,20 +23,10 @@ void printline(const char *message)
 
 void * get_real_func(const char *func_name)
 {
-    /* use static variable to prevent duplicated .so loading */
-    static void *handle = NULL;
-
-    if (handle == NULL) {
-        handle = dlopen("/lib/x86_64-linux-gnu/libc.so.6", RTLD_LAZY);
-        if (!handle) {
-            return NULL;
-        }
-    }
-
     /* Clear any existing error */
     dlerror();
 
-    void *real_func = dlsym(handle, func_name);
+    void *real_func = dlsym(RTLD_NEXT, func_name);
 
     if (dlerror() != NULL) {
         return NULL;
