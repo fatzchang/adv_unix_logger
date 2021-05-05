@@ -16,7 +16,7 @@ int chmod(const char *path, mode_t mode)
     int rtn = real_chmod(path, mode);
     
     char buffer[MAX_MESSAGE_SIZE] = { 0 };
-    snprintf(buffer, MAX_MESSAGE_SIZE, "chmod(\"%s\", %o) = %d", resolved_path, mode, rtn);
+    snprintf(buffer, MAX_MESSAGE_SIZE, "chmod(\"%s\", %03o) = %d", resolved_path, mode, rtn);
     printline(buffer);
 
     return rtn;

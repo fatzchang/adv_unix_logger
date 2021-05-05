@@ -16,7 +16,10 @@ void printline(const char *message)
     char *output_file = getenv("OUTPUT_FILE");
     
     mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-    int fd = open(output_file, O_APPEND | O_RDWR | O_CREAT, mode);
+
+    // use real
+    int (*real_open)(const char *, int, mode_t) = get_real_func("open");
+    int fd = real_open(output_file, O_APPEND | O_RDWR | O_CREAT, mode);
     
     dprintf(fd, "[logger] %s\n", message);
 }

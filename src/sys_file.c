@@ -1,5 +1,9 @@
+#define _GNU_SOURCE
+
 #include <sys/stat.h>
 #include <limits.h>
+#include <stdarg.h>
+#include <fcntl.h>
 
 #include "utils.h"
 #include "output.h"
@@ -14,7 +18,7 @@ int creat(const char *path, mode_t mode)
     int rtn = real_creat(path, mode);
     
     char buffer[MAX_MESSAGE_SIZE] = { 0 };
-    snprintf(buffer, MAX_MESSAGE_SIZE, "creat(\"%s\", %o) = %d", resolved_path, mode, rtn);
+    snprintf(buffer, MAX_MESSAGE_SIZE, "creat(\"%s\", %03o) = %d", resolved_path, mode, rtn);
     printline(buffer);
 
     return rtn;
@@ -73,6 +77,34 @@ int close(int fd)
 
     char buffer[MAX_MESSAGE_SIZE] = { 0 };
     snprintf(buffer, MAX_MESSAGE_SIZE, "close(\"%s\") = %d", resolved_path, rtn);
+    printline(buffer);
+
+    return rtn;
+}
+
+int open(const char *path, int flags, ...)
+{
+    char resolved_path[PATH_MAX] = { 0 };
+    get_real_path(resolved_path, path);
+
+    int (*real_open)(const char *, int, ...) = get_real_func("open");
+
+    int rtn;
+    va_list args;
+    va_start(args, flags);
+    mode_t mode = va_arg(args, mode_t);
+    char buffer[MAX_MESSAGE_SIZE] = { 0 };
+
+    if (flags & (O_CREAT | O_TMPFILE)) {
+        rtn = real_open(path, flags, mode);
+        snprintf(buffer, MAX_MESSAGE_SIZE, "open(\"%s\", %03o, %03o) = %d", resolved_path, flags, mode, rtn);
+    } else {
+        rtn = real_open(path, flags);
+        snprintf(buffer, MAX_MESSAGE_SIZE, "open(\"%s\", %03o) = %d", resolved_path, flags, rtn);
+    }
+
+    va_end(args);
+
     printline(buffer);
 
     return rtn;
