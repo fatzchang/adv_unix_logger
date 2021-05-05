@@ -4,14 +4,14 @@
 
 #include "utils.h"
 
-FILE *fopen(const char *pathname, const char *mode)
+FILE *fopen(const char *path, const char *mode)
 {
     char resolved_path[PATH_MAX] = { 0 };
-    get_real_path(resolved_path, pathname);
+    get_real_path(resolved_path, path);
 
     FILE * (*real_fopen)(const char *, const char *) = get_real_func("fopen");
 
-    FILE *rtn = real_fopen(pathname, mode);
+    FILE *rtn = real_fopen(path, mode);
 
     char buffer[MAX_MESSAGE_SIZE] = { 0 };
     snprintf(buffer, MAX_MESSAGE_SIZE, "fopen(\"%s\", \"%s\") = %p", resolved_path, mode, rtn);
