@@ -1,7 +1,7 @@
 #ifndef __UTILS_H
 #define __UTILS_H
 
-#define MAX_MESSAGE_SIZE (8192)
+#define MAX_MESSAGE_SIZE (16384)
 
 #include <stdio.h>
 

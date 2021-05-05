@@ -79,3 +79,22 @@ size_t fwrite(const void *ptr, size_t size, size_t count, FILE *stream)
 
     return rtn;
 }
+
+int rename(const char *oldpath, const char *newpath)
+{
+    char resolved_old_path[PATH_MAX] = { 0 };
+    get_real_path(resolved_old_path, oldpath);
+    
+    char resolved_new_path[PATH_MAX] = { 0 };
+    get_real_path(resolved_new_path, newpath);
+
+    int (*real_rename)(const char *, const char *) = get_real_func("rename");
+
+    int rtn = real_rename(oldpath, newpath);
+
+    char buffer[MAX_MESSAGE_SIZE] = { 0 };
+    snprintf(buffer, MAX_MESSAGE_SIZE, "rename(\"%s\", \"%s\") = %d", resolved_old_path, resolved_new_path, rtn);
+    printline(buffer);
+
+    return rtn;
+}
