@@ -11,13 +11,13 @@ FILE *fopen(const char *pathname, const char *mode)
 
     FILE * (*real_fopen)(const char *, const char *) = get_real_func("fopen");
 
-    FILE *fp = real_fopen(pathname, mode);
+    FILE *rtn = real_fopen(pathname, mode);
 
     char buffer[MAX_MESSAGE_SIZE] = { 0 };
-    snprintf(buffer, MAX_MESSAGE_SIZE, "fopen(\"%s\", \"%s\") = %p", resolved_path, mode, fp);
+    snprintf(buffer, MAX_MESSAGE_SIZE, "fopen(\"%s\", \"%s\") = %p", resolved_path, mode, rtn);
     printline(buffer);
 
-    return fp;
+    return rtn;
 }
 
 
@@ -39,7 +39,22 @@ int fclose (FILE *stream)
 }
 
 
-size_t fread ( void * ptr, size_t size, size_t count, FILE * stream )
+size_t fread(void *ptr, size_t size, size_t count, FILE *stream)
 {
-    return 0;
+    // find real path of fd
+    char resolved_path[PATH_MAX] = { 0 };
+    get_fp_real_path(resolved_path, stream);
+
+    size_t (*real_fread)(void *, size_t, size_t, FILE *) = get_real_func("fread");
+
+    size_t rtn = real_fread(ptr, size, count, stream);
+
+    char ptr_string[33] = { 0 };
+    get_ptr_string(ptr_string, ptr, size * count);
+
+    char buffer[MAX_MESSAGE_SIZE] = { 0 };
+    snprintf(buffer, MAX_MESSAGE_SIZE, "fread(\"%s\", %ld, %ld, \"%s\") = %ld", ptr_string, size, count, resolved_path, rtn);
+    printline(buffer);
+
+    return rtn;
 }

@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <ctype.h>
+
 
 #include "utils.h"
 
@@ -65,4 +67,20 @@ char *get_fp_real_path(char *resolved_path, FILE *stream)
     readlink(fd_path, resolved_path, PATH_MAX);
 
     return resolved_path;
+}
+
+char *get_ptr_string(char *ptr_string, char *ptr, int len)
+{
+    // max len is bound to 32 bytes
+    len = len < 32 ? len : 32;
+
+    for (int i = 0; i < len; i++) {
+        if (isprint(ptr[i])) {
+            ptr_string[i] = ptr[i];
+        } else {
+            ptr_string[i] = '.';
+        }
+    }
+
+    return ptr_string;
 }
