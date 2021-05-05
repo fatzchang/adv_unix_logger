@@ -5,7 +5,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include <sys/stat.h>
+#include <unistd.h>
 
 #include "utils.h"
 
@@ -50,6 +50,19 @@ char *get_real_path(char *resolved_path, const char *path)
         memset(resolved_path, 0, PATH_MAX);
         strcpy(resolved_path, path);
     }
+
+    return resolved_path;
+}
+
+char *get_fp_real_path(char *resolved_path, FILE *stream)
+{
+    // get file descriptor
+    int fd = fileno(stream);
+
+    char fd_path[PATH_MAX] = { 0 };
+    snprintf(fd_path, PATH_MAX, "/proc/self/fd/%d", fd);
+
+    readlink(fd_path, resolved_path, PATH_MAX);
 
     return resolved_path;
 }

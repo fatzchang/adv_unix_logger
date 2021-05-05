@@ -8,7 +8,7 @@
 
 int chmod(const char *path, mode_t mode)
 {
-    char resolved_path[PATH_MAX];
+    char resolved_path[PATH_MAX] = { 0 };
     get_real_path(resolved_path, path);
 
     int (*real_chmod)(const char *, mode_t) = get_real_func("chmod");

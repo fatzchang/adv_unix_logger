@@ -3,8 +3,11 @@
 
 #define MAX_MESSAGE_SIZE (8192)
 
+#include <stdio.h>
+
 void printline(const char *message);
-void * get_real_func(const char *func);
+void *get_real_func(const char *func);
 char *get_real_path(char *resolved_path, const char *path);
+char *get_fp_real_path(char *resolved_path, FILE *stream);
 
 #endif

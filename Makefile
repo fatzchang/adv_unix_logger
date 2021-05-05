@@ -22,8 +22,8 @@ all: $(SO_FILE)
 $(SO_FILE): $(O_FILES)
 	gcc -shared -fPIC -o $@ $(O_FILES) -ldl
 
-test: test.c
-	gcc -o $@ $@.c
+test: test/test.c
+	gcc -o test/test $<
 
 clean:
 	rm -rf $(BUILD_DIR)
