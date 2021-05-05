@@ -43,7 +43,6 @@ ssize_t read(int fd, void *buf, size_t count)
 
 ssize_t write(int fd, const void *buf, size_t count)
 {
-    // convert to FILE* and to call get_fp_real_path
     FILE *stream = fdopen(fd, "w");
     char resolved_path[PATH_MAX] = { 0 };
     get_fp_real_path(resolved_path, stream);
@@ -57,6 +56,23 @@ ssize_t write(int fd, const void *buf, size_t count)
 
     char buffer[MAX_MESSAGE_SIZE] = { 0 };
     snprintf(buffer, MAX_MESSAGE_SIZE, "write(\"%s\", %s, %ld) = %ld", resolved_path, ptr_string, count, rtn);
+    printline(buffer);
+
+    return rtn;
+}
+
+int close(int fd)
+{
+    FILE *stream = fdopen(fd, "r");
+    char resolved_path[PATH_MAX] = { 0 };
+    get_fp_real_path(resolved_path, stream);
+
+    int (*real_close)(int) = get_real_func("close");
+
+    int rtn = real_close(fd);
+
+    char buffer[MAX_MESSAGE_SIZE] = { 0 };
+    snprintf(buffer, MAX_MESSAGE_SIZE, "close(\"%s\") = %d", resolved_path, rtn);
     printline(buffer);
 
     return rtn;
