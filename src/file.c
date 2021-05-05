@@ -50,7 +50,7 @@ size_t fread(void *ptr, size_t size, size_t count, FILE *stream)
     size_t rtn = real_fread(ptr, size, count, stream);
 
     char ptr_string[33] = { 0 };
-    get_ptr_string(ptr_string, ptr, size * count);
+    get_ptr_string(ptr_string, ptr, rtn * size);
 
     char buffer[MAX_MESSAGE_SIZE] = { 0 };
     snprintf(buffer, MAX_MESSAGE_SIZE, "fread(\"%s\", %ld, %ld, \"%s\") = %ld", ptr_string, size, count, resolved_path, rtn);
@@ -71,7 +71,7 @@ size_t fwrite(const void *ptr, size_t size, size_t count, FILE *stream)
     size_t rtn = real_fwrite(ptr, size, count, stream);
 
     char ptr_string[33] = { 0 };
-    get_ptr_string(ptr_string, ptr, size * count);
+    get_ptr_string(ptr_string, ptr, rtn * size);
 
     char buffer[MAX_MESSAGE_SIZE] = { 0 };
     snprintf(buffer, MAX_MESSAGE_SIZE, "fwrite(\"%s\", %ld, %ld, \"%s\") = %ld", ptr_string, size, count, resolved_path, rtn);
@@ -94,6 +94,19 @@ int rename(const char *oldpath, const char *newpath)
 
     char buffer[MAX_MESSAGE_SIZE] = { 0 };
     snprintf(buffer, MAX_MESSAGE_SIZE, "rename(\"%s\", \"%s\") = %d", resolved_old_path, resolved_new_path, rtn);
+    printline(buffer);
+
+    return rtn;
+}
+
+FILE *tmpfile()
+{
+    FILE * (*real_tmpfile)(void) = get_real_func("tmpfile");
+
+    FILE *rtn = real_tmpfile();
+
+    char buffer[MAX_MESSAGE_SIZE] = { 0 };
+    snprintf(buffer, MAX_MESSAGE_SIZE, "tmpfile() = %p", rtn);
     printline(buffer);
 
     return rtn;
