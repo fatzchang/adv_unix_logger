@@ -58,3 +58,24 @@ size_t fread(void *ptr, size_t size, size_t count, FILE *stream)
 
     return rtn;
 }
+
+
+size_t fwrite(const void *ptr, size_t size, size_t count, FILE *stream)
+{
+     // find real path of fd
+    char resolved_path[PATH_MAX] = { 0 };
+    get_fp_real_path(resolved_path, stream);
+
+    size_t (*real_fwrite)(const void *, size_t, size_t, FILE *) = get_real_func("fwrite");
+
+    size_t rtn = real_fwrite(ptr, size, count, stream);
+
+    char ptr_string[33] = { 0 };
+    get_ptr_string(ptr_string, ptr, size * count);
+
+    char buffer[MAX_MESSAGE_SIZE] = { 0 };
+    snprintf(buffer, MAX_MESSAGE_SIZE, "fwrite(\"%s\", %ld, %ld, \"%s\") = %ld", ptr_string, size, count, resolved_path, rtn);
+    printline(buffer);
+
+    return rtn;
+}

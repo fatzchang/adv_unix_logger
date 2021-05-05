@@ -69,7 +69,7 @@ char *get_fp_real_path(char *resolved_path, FILE *stream)
     return resolved_path;
 }
 
-char *get_ptr_string(char *ptr_string, char *ptr, int len)
+char *get_ptr_string(char *ptr_string, const char *ptr, int len)
 {
     // max len is bound to 32 bytes
     len = len < 32 ? len : 32;
