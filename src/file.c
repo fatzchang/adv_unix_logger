@@ -20,6 +20,22 @@ FILE *fopen(const char *path, const char *mode)
     return rtn;
 }
 
+FILE *fopen64(const char *path, const char *mode)
+{
+    char resolved_path[PATH_MAX] = { 0 };
+    get_real_path(resolved_path, path);
+
+    FILE * (*real_fopen)(const char *, const char *) = get_real_func("fopen64");
+
+    FILE *rtn = real_fopen(path, mode);
+
+    char buffer[MAX_MESSAGE_SIZE] = { 0 };
+    snprintf(buffer, MAX_MESSAGE_SIZE, "fopen(\"%s\", \"%s\") = %p", resolved_path, mode, rtn);
+    printline(buffer);
+
+    return rtn;
+}
+
 
 int fclose (FILE *stream)
 {
@@ -102,6 +118,19 @@ int rename(const char *oldpath, const char *newpath)
 FILE *tmpfile()
 {
     FILE * (*real_tmpfile)(void) = get_real_func("tmpfile");
+
+    FILE *rtn = real_tmpfile();
+
+    char buffer[MAX_MESSAGE_SIZE] = { 0 };
+    snprintf(buffer, MAX_MESSAGE_SIZE, "tmpfile() = %p", rtn);
+    printline(buffer);
+
+    return rtn;
+}
+
+FILE *tmpfile64()
+{
+    FILE * (*real_tmpfile)(void) = get_real_func("tmpfile64");
 
     FILE *rtn = real_tmpfile();
 
