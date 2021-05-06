@@ -19,9 +19,13 @@ void printline(const char *message)
 
     // use real
     int (*real_open)(const char *, int, mode_t) = get_real_func("open");
+    int (*real_close)(int) = get_real_func("close");
+
     int fd = real_open(output_file, O_APPEND | O_RDWR | O_CREAT, mode);
     
     dprintf(fd, "[logger] %s\n", message);
+
+    real_close(fd);
 }
 
 void * get_real_func(const char *func_name)
@@ -54,6 +58,11 @@ char *get_fp_real_path(char *resolved_path, FILE *stream)
     // get file descriptor
     int fd = fileno(stream);
 
+    return get_fd_real_path(resolved_path, fd);
+}
+
+char *get_fd_real_path(char *resolved_path, int fd)
+{
     char fd_path[PATH_MAX] = { 0 };
     snprintf(fd_path, PATH_MAX, "/proc/self/fd/%d", fd);
 
