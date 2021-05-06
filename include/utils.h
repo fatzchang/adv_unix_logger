@@ -9,6 +9,7 @@ void printline(const char *message);
 void *get_real_func(const char *func);
 char *get_real_path(char *resolved_path, const char *path);
 char *get_fp_real_path(char *resolved_path, FILE *stream);
+char *get_fd_real_path(char *resolved_path, int fd);
 char *get_ptr_string(char *ptr_string, const char *ptr, int len);
 
 #endif
