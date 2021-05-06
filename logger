@@ -48,4 +48,4 @@ export LD_PRELOAD="$so_path"
 export OUTPUT_FILE="$output_file"
 
 # execute command with so injection
-exec $@
+$($@)
